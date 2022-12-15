@@ -9,8 +9,10 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo-google-fonts/montserrat": "^0.2.2",
     "axios": "^1.2.1",
     "expo": "~47.0.8",
+    "expo-font": "~11.0.1",
     "expo-status-bar": "~1.4.2",
     "lottie-react-native": "^5.1.4",
     "native-base": "^3.4.25",
