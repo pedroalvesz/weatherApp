@@ -1,4 +1,4 @@
-import { VStack, Heading, Text, Button } from 'native-base';
+import { VStack, Heading, Text, Button, HStack } from 'native-base';
 import Lottie from 'lottie-react-native'
 
 import { DataList } from '../components/DataList';
@@ -16,26 +16,28 @@ export function Dashboard() {
           </Text>
         </VStack>
 
-        <Lottie
-        source={require('../assets/cloudy-raining.json')}
-        autoPlay
-        loop
-        style={{
-          width: 192
-        }
-        }
-        />
+        <HStack bg='#4084DF:alpha.20' rounded='xl' px={4} pt={4}>
+          <Lottie
+          source={require('../assets/snowing.json')}
+          autoPlay
+          loop
+          style={{
+            width: 192
+          }
+          }
+          />
 
-        <VStack pt={3} pb={5} alignItems='center'>
-          <Heading fontFamily='heading' color='white' fontSize={70}>
-            28°
-          </Heading>
-          <Text fontFamily='body' color='#CACACA' fontSize={20}>
-            Snowing
-          </Text>
-        </VStack>
+          <VStack pt={3} pb={12} alignItems='center' justifyContent='center'>
+            <Heading fontFamily='heading' color='white' fontSize={50}>
+              28°
+            </Heading>
+            <Text fontFamily='body' color='#CACACA' fontSize={15}>
+              Snowing
+            </Text>
+          </VStack>
+        </HStack>
 
-        <DataList/>
+        <DataList mt={10}/>
 
       </VStack>
     </VStack>
