@@ -4,6 +4,10 @@ import WindSvg from '../assets/windspeed.svg';
 import HumiditySvg from '../assets/humidity.svg';
 import HumanSvg from '../assets/human.svg';
 
+type DataListProps = IStackProps & {
+  windspeed: number,
+  humidity: number,
+}
 
 export function DataList( {...rest} : IStackProps) {
   return(
