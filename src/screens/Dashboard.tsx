@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { VStack, Heading, Text, Button, HStack, Box, Select } from 'native-base';
 import Lottie from 'lottie-react-native'
+import * as Location from 'expo-location'
 
 import { DataList } from '../components/DataList';
 import { api } from '../services/api';
@@ -51,12 +52,13 @@ export function Dashboard() {
 
 
   useEffect(() => {
-    fetchData(selectedPlace)
+    getLocation()
   },[])
 
-  async function fetchData(place: string) {
+  async function fetchData(lat: number, lon: number) {
     try {
-      const response = await api.get(`https://api.openweathermap.org/data/2.5/weather?q=${place}&appid=4e8f41051466420458bed81135e27913`)
+      
+      const response = await api.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=4e8f41051466420458bed81135e27913`)
       setPlaceData(response)
     } catch (error) {
       console.log(error)
@@ -65,7 +67,20 @@ export function Dashboard() {
     }
   }
 
-  console.log(placeData)
+  async function getLocation() {
+
+    const { status } = await Location.requestForegroundPermissionsAsync()
+
+    if(status !== 'granted') {
+      console.log('Permission denied')
+      return;
+    }
+
+    const { coords } = await Location.getCurrentPositionAsync()
+
+    fetchData(coords.latitude, coords.longitude)
+  }
+
 
   return(
     <VStack flex={1} bg='#080A2F'>
@@ -114,15 +129,6 @@ export function Dashboard() {
         justifyContent='center'
         alignItems='center'
         >
-          <Select
-          width='full'
-          placeholder='Choose a city'
-          onValueChange={place => fetchData(place)}
-          >
-            {
-              places.map((place) => <Select.Item label={place.name} value={place.name} /> )
-            }
-          </Select>
         </Box>
       </VStack>
       }
