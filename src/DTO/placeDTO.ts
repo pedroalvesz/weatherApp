@@ -1,5 +1,6 @@
 export interface placeDTO {
   data: {
+    currentFullDate: string | number,
     coord: {
       lat: number,
       lon: number,
@@ -11,6 +12,11 @@ export interface placeDTO {
     }],
     wind: {
       speed: number,
-    }
+    },
+    main: {
+      temp: number,
+      feels_like: number,
+      humidity: number,
+    },
  }
 }

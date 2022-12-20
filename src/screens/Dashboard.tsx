@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { VStack, Heading, Text, Button, HStack, Box, Select } from 'native-base';
+import { VStack, Heading, Text, HStack, Box } from 'native-base';
 import Lottie from 'lottie-react-native'
 import * as Location from 'expo-location'
 
@@ -8,45 +8,11 @@ import { api } from '../services/api';
 
 import { placeDTO } from '../DTO/placeDTO'
 
-type placeProps = {
-  name: string,
-  lat: number,
-  lon: number
-}
 
 export function Dashboard() {
 
-  const [places, setPlaces] = useState<placeProps[]>([
-    {
-      name: 'New York',
-      lat: 40.7,
-      lon: -73.9,
-    },
-    {
-      name: 'Amsterdam',
-      lat: 40.7,
-      lon: -73.9,
-    },
-    {
-      name: 'Osaka',
-      lat: 34.6,
-      lon: 135.4  ,
-    },
-    {
-      name: 'Rio de Janeiro',
-      lat: -22.9,
-      lon: -43.1,
-    },
-    {
-      name: 'Paris',
-      lat: 48.8,
-      lon: 2.34,
-    },
-  ])
-
-  const [selectedPlace, setSelectedPlace] = useState('Paris')
-
   const [placeData, setPlaceData] = useState({} as placeDTO)
+  const [fullDate, setFullDate] = useState('')
 
   const [isLoading, setIsLoading] = useState(true)
 
@@ -54,18 +20,6 @@ export function Dashboard() {
   useEffect(() => {
     getLocation()
   },[])
-
-  async function fetchData(lat: number, lon: number) {
-    try {
-      
-      const response = await api.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=4e8f41051466420458bed81135e27913`)
-      setPlaceData(response)
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   async function getLocation() {
 
@@ -82,6 +36,37 @@ export function Dashboard() {
   }
 
 
+  async function fetchData(lat: number, lon: number) {
+    try {
+      
+      const response = await api.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=4e8f41051466420458bed81135e27913&units=metric`)
+      setPlaceData(response)
+
+
+      const monthNames = ["jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+      ];
+
+      const currentTimeStamp = new Date()
+
+      const currentMonth = monthNames[currentTimeStamp.getMonth()]
+      const currentYear = currentTimeStamp.getFullYear()
+      const currentDate = currentTimeStamp.getDate()
+
+      const currentFullDate = currentMonth +' '+currentDate+', '+currentYear
+      console.log(currentFullDate)
+
+      setFullDate(currentFullDate)
+
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+
+
   return(
     <VStack flex={1} bg='#080A2F'>
       {
@@ -92,13 +77,13 @@ export function Dashboard() {
             {placeData.data.name}
           </Text>
           <Text fontFamily='body' color='#CACACA' fontSize={20}>
-            00 jan, 2022
+            {fullDate}
           </Text>
         </VStack>
 
         <HStack bg='#4084DF:alpha.20' rounded='xl' px={4} pt={4}>
           <Lottie
-          source={require('../assets/cloudy-raining.json')}
+          source={require('../assets/cloudy-weather.json')}
           autoPlay
           loop
           style={{
@@ -109,7 +94,7 @@ export function Dashboard() {
 
           <VStack pt={3} pb={12} alignItems='center' justifyContent='center'>
             <Heading fontFamily='heading' color='white' fontSize={50}>
-              28°
+              {Math.trunc(placeData.data.main.temp)}°C
             </Heading>
             <Text fontFamily='body' color='#CACACA' fontSize={15} textTransform='capitalize'>
               {placeData.data.weather[0].description}
@@ -117,7 +102,12 @@ export function Dashboard() {
           </VStack>
         </HStack>
 
-        <DataList mt={10}/>
+        <DataList
+        mt={10}
+        windspeed={placeData.data.wind.speed}
+        humidity={placeData.data.main.humidity}
+        feels_like={placeData.data.main.feels_like}
+        />
         
         <Box
         bg='#4084DF:alpha.20'

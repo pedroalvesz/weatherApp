@@ -7,9 +7,10 @@ import HumanSvg from '../assets/human.svg';
 type DataListProps = IStackProps & {
   windspeed: number,
   humidity: number,
+  feels_like: number,
 }
 
-export function DataList( {...rest} : IStackProps) {
+export function DataList( {windspeed, humidity, feels_like, ...rest} : DataListProps) {
   return(
     <HStack
     width='75%'
@@ -22,21 +23,21 @@ export function DataList( {...rest} : IStackProps) {
       <VStack alignItems='center'>
         <WindSvg/>
         <Text pt={1} fontFamily='body' fontSize={14} color='white'>
-          26 km/h
+          {windspeed} km/h
         </Text>
       </VStack>
 
       <VStack alignItems='center'>
         <HumanSvg/>
         <Text pt='3px' fontFamily='body' fontSize={14} color='white'>
-          543
+          {Math.trunc(feels_like)}°C
         </Text>
       </VStack>
 
       <VStack alignItems='center'>
         <HumiditySvg/>
         <Text pt={2} fontFamily='body' fontSize={14} color='white'>
-          26 km/h
+          {humidity}
         </Text>
       </VStack>
 
