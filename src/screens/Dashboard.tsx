@@ -8,6 +8,7 @@ import { api } from '../services/api';
 
 import { placeDTO } from '../DTO/placeDTO'
 import { RefreshControl } from 'react-native';
+import { SkeletonScreen } from '../components/SkeletonDashboard';
 
 
 export function Dashboard() {
@@ -69,7 +70,7 @@ export function Dashboard() {
     } catch (error) {
       console.log(error)
     } finally {
-      setIsLoading(false)
+      setIsLoading(true)
     }
   }
 
@@ -84,7 +85,7 @@ export function Dashboard() {
 
     >
       {
-        isLoading ? <VStack/> :
+        isLoading ? <SkeletonScreen/> :
         <VStack px={6} alignItems='center'>
         <VStack pb={5} alignItems='center'>
           <Text fontFamily='heading' color='white' fontSize={40}>
