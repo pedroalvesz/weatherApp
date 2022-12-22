@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { VStack, Heading, Text, HStack, Box } from 'native-base';
+import { VStack, Heading, Text, HStack, Box, ScrollView } from 'native-base';
 import Lottie from 'lottie-react-native'
 import * as Location from 'expo-location'
 
@@ -7,6 +7,7 @@ import { DataList } from '../components/DataList';
 import { api } from '../services/api';
 
 import { placeDTO } from '../DTO/placeDTO'
+import { RefreshControl } from 'react-native';
 
 
 export function Dashboard() {
@@ -15,11 +16,19 @@ export function Dashboard() {
   const [fullDate, setFullDate] = useState('')
 
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
 
   useEffect(() => {
     getLocation()
   },[])
+
+  async function onRefresh() {
+    setIsRefreshing(true)
+    //await fetchData(placeData.data.coord.lat, placeData.data.coord.lon)
+    await getLocation()
+    setIsRefreshing(false)
+  }
 
   async function getLocation() {
 
@@ -43,7 +52,7 @@ export function Dashboard() {
       setPlaceData(response)
 
 
-      const monthNames = ["jan", "feb", "mar", "apr", "may", "jun",
+      const monthNames = ["jan", "feb ", "mar", "apr", "may", "jun",
       "jul", "aug", "sep", "oct", "nov", "dec"
       ];
 
@@ -54,7 +63,6 @@ export function Dashboard() {
       const currentDate = currentTimeStamp.getDate()
 
       const currentFullDate = currentMonth +' '+currentDate+', '+currentYear
-      console.log(currentFullDate)
 
       setFullDate(currentFullDate)
 
@@ -68,10 +76,16 @@ export function Dashboard() {
 
 
   return(
-    <VStack flex={1} bg='#080A2F'>
+    <ScrollView
+    h='100%'
+    pt={20}
+    bg='#080A2F'
+    refreshControl={<RefreshControl refreshing={isRefreshing}  onRefresh={onRefresh} progressViewOffset={30} tintColor='white' colors={['white']} />}
+
+    >
       {
         isLoading ? <VStack/> :
-        <VStack flex={1} px={8} pt={20} alignItems='center'>
+        <VStack px={6} alignItems='center'>
         <VStack pb={5} alignItems='center'>
           <Text fontFamily='heading' color='white' fontSize={40}>
             {placeData.data.name}
@@ -93,10 +107,10 @@ export function Dashboard() {
           />
 
           <VStack pt={3} pb={12} alignItems='center' justifyContent='center'>
-            <Heading fontFamily='heading' color='white' fontSize={50}>
+            <Heading fontFamily='heading' color='white' fontSize={48}>
               {Math.trunc(placeData.data.main.temp)}°C
             </Heading>
-            <Text fontFamily='body' color='#CACACA' fontSize={15} textTransform='capitalize'>
+            <Text fontFamily='body' color='#CACACA' fontSize={14} textTransform='capitalize'>
               {placeData.data.weather[0].description}
             </Text>
           </VStack>
@@ -109,19 +123,8 @@ export function Dashboard() {
         feels_like={placeData.data.main.feels_like}
         />
         
-        <Box
-        bg='#4084DF:alpha.20'
-        position='absolute'
-        bottom={7}
-        w={56}
-        h={16}
-        rounded='xl'
-        justifyContent='center'
-        alignItems='center'
-        >
-        </Box>
       </VStack>
       }
-    </VStack>
+    </ScrollView>
   )
 }
